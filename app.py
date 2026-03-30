@@ -2,29 +2,29 @@ from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
-# "Base de dados" temporária
+
 treinos = []
 proximo_id = 1
-xp_total = 0  # Sistema de pontuação
+xp_total = 0  
 
 def calcular_status(xp):
-    # A cada 100 XP, sobe 1 nível
+
     nivel = (xp // 100) + 1
     xp_atual = xp % 100
     return nivel, xp_atual
 
 @app.route('/')
 def index():
-    # 1. Lógica da Barra de Pesquisa
+  
     termo_pesquisa = request.args.get('busca', '').lower()
     
     if termo_pesquisa:
-        # Filtra os treinos se houver uma pesquisa
+
         treinos_exibicao = [t for t in treinos if termo_pesquisa in t['exercicio'].lower()]
     else:
         treinos_exibicao = treinos
 
-    # 2. Lógica de Nível e XP
+
     nivel, xp_atual = calcular_status(xp_total)
     
     return render_template('index.html', 
@@ -62,10 +62,10 @@ def toggle_treino(id):
         if t['id'] == id:
             if not t['concluido']:
                 t['concluido'] = True
-                xp_total += 25  # Ganha XP ao concluir
+                xp_total += 25 
             else:
                 t['concluido'] = False
-                xp_total -= 25  # Perde XP se desmarcar
+                xp_total -= 25  
             break
     return redirect(url_for('index'))
 
@@ -74,7 +74,7 @@ def deletar_treino(id):
     global treinos, xp_total
     for t in treinos:
         if t['id'] == id:
-            # Se eliminar um treino já feito, remove o XP correspondente
+            
             if t['concluido']:
                 xp_total -= 25
             treinos.remove(t)
