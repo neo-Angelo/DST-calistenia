@@ -52,3 +52,9 @@ Um aplicativo web desenvolvido em **Python** utilizando o framework **Flask**. E
 5. acessse a plataforma
    
    Abra o seu navegador e acesse: http://127.0.0.1:5000/
+
+## ⚙️ Plataforma
+
+<img width="1477" height="696" alt="Image" src="https://github.com/user-attachments/assets/56d3b702-00da-4669-9a65-b8ecdc610a8f" />
+
+<img width="1524" height="704" alt="Image" src="https://github.com/user-attachments/assets/ba5c7b9a-1e66-4afd-853d-eeba4efc5205" />
