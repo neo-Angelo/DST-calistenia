@@ -5,40 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diário de Calistenia</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f9; margin: 40px; }
-        .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        h1, h2 { color: #333; text-align: center; }
-        form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
-        input, button { padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 5px; }
-        button { background-color: #28a745; color: white; cursor: pointer; border: none; font-weight: bold; }
-        button:hover { background-color: #218838; }
-        .treino-card { background: #e9ecef; padding: 15px; margin-bottom: 10px; border-radius: 5px; border-left: 5px solid #007bff; }
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #e0e0e0;
+            --text-muted: #888;
+            --accent: #6200ea;
+            --accent-hover: #7f39fb;
+            --success: #03dac6;
+            --danger: #cf6679;
+            --info: #2196f3;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 40px 20px; }
+        .container { max-width: 700px; margin: auto; }
+        h1, h2 { text-align: center; color: var(--text-main); font-weight: 300; }
+        
+        /* Formulário */
+        .form-card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); margin-bottom: 40px; }
+        form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        form input { background: #2c2c2c; border: 1px solid #444; color: white; padding: 12px; border-radius: 6px; font-size: 15px; }
+        form input:focus { outline: none; border-color: var(--accent); }
+        .full-width { grid-column: span 2; }
+        .btn-add { background-color: var(--accent); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; grid-column: span 2; }
+        .btn-add:hover { background-color: var(--accent-hover); }
+
+        /* Lista de Treinos */
+        .treino-card { background: var(--card-bg); padding: 20px; margin-bottom: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--text-muted); transition: 0.3s; }
+        .treino-card.feito { border-left-color: var(--success); opacity: 0.8; }
+        .treino-info h3 { margin: 0 0 5px 0; font-size: 18px; }
+        .treino-info p { margin: 0; color: var(--text-muted); font-size: 14px; }
+        .feito-texto { text-decoration: line-through; color: var(--text-muted); }
+        
+        /* Botões de Ação */
+        .actions { display: flex; gap: 10px; }
+        .btn { padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: #121212; transition: 0.2s; }
+        .btn-toggle { background-color: var(--success); }
+        .btn-edit { background-color: var(--info); color: white; text-decoration: none; font-size: 13.5px; padding: 10px 12px;}
+        .btn-delete { background-color: var(--danger); color: white; }
+        .btn:hover { filter: brightness(1.2); }
+        form.inline-form { display: inline; margin: 0; grid-template-columns: 1fr; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Meu Diário de Calistenia 💪</h1>
+    <h1>Diário de Calistenia ⚡</h1>
     
-    <form action="/adicionar" method="POST">
-        <input type="text" name="exercicio" placeholder="Exercício (ex: Pull-ups, Dips)" required>
-        <input type="number" name="series" placeholder="Número de Séries" required>
-        <input type="number" name="repeticoes" placeholder="Repetições por Série" required>
-        <input type="date" name="data" required>
-        <button type="submit">Adicionar Treino</button>
-    </form>
+    <div class="form-card">
+        <form action="/adicionar" method="POST">
+            <input type="text" name="exercicio" class="full-width" placeholder="Ex: Muscle-ups, Dips..." required>
+            <input type="number" name="series" placeholder="Séries" required>
+            <input type="number" name="repeticoes" placeholder="Repetições" required>
+            <input type="date" name="data" class="full-width" required>
+            <button type="submit" class="btn-add">Registrar Treino</button>
+        </form>
+    </div>
 
-    <h2>Histórico de Treinos</h2>
+    <h2>Seus Treinos</h2>
     
     {% if treinos %}
         {% for treino in treinos %}
-            <div class="treino-card">
-                <strong>{{ treino.data }}</strong> - {{ treino.exercicio }}<br>
-                Séries: {{ treino.series }} | Repetições: {{ treino.repeticoes }}
+            <div class="treino-card {% if treino.concluido %}feito{% endif %}">
+                <div class="treino-info">
+                    <h3 class="{% if treino.concluido %}feito-texto{% endif %}">{{ treino.exercicio }}</h3>
+                    <p>📅 {{ treino.data }} &nbsp;|&nbsp; 🔄 {{ treino.series }} séries de {{ treino.repeticoes }} reps</p>
+                </div>
+                
+                <div class="actions">
+                    <form action="/toggle/{{ treino.id }}" method="POST" class="inline-form">
+                        <button type="submit" class="btn btn-toggle">
+                            {% if treino.concluido %}Desfazer{% else %}Feito{% endif %}
+                        </button>
+                    </form>
+                    
+                    <a href="/editar/{{ treino.id }}" class="btn btn-edit">Editar</a>
+                    
+                    <form action="/deletar/{{ treino.id }}" method="POST" class="inline-form">
+                        <button type="submit" class="btn btn-delete">Excluir</button>
+                    </form>
+                </div>
             </div>
         {% endfor %}
     {% else %}
-        <p style="text-align: center; color: #777;">Nenhum treino registrado ainda. Bora treinar!</p>
+        <p style="text-align: center; color: #888; margin-top: 30px;">Nenhum treino registrado. O descanso acabou!</p>
     {% endif %}
 </div>
 

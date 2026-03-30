@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Treino</title>
+    <style>
+        /* Reutilizando as cores do tema principal */
+        :root { --bg-color: #121212; --card-bg: #1e1e1e; --text-main: #e0e0e0; --accent: #2196f3; --accent-hover: #4dabf5; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .form-card { background: var(--card-bg); padding: 30px; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); width: 100%; max-width: 400px; }
+        h2 { text-align: center; margin-top: 0; }
+        form { display: flex; flex-direction: column; gap: 15px; }
+        label { font-size: 14px; color: #aaa; margin-bottom: -10px; }
+        input { background: #2c2c2c; border: 1px solid #444; color: white; padding: 12px; border-radius: 6px; font-size: 15px; }
+        input:focus { outline: none; border-color: var(--accent); }
+        .btn-save { background-color: var(--accent); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; margin-top: 10px; }
+        .btn-save:hover { background-color: var(--accent-hover); }
+        .btn-back { text-align: center; display: block; margin-top: 15px; color: #aaa; text-decoration: none; font-size: 14px; }
+        .btn-back:hover { color: white; }
+    </style>
+</head>
+<body>
+
+<div class="form-card">
+    <h2>✏️ Editar Treino</h2>
+    <form action="/editar/{{ treino.id }}" method="POST">
+        <label>Exercício</label>
+        <input type="text" name="exercicio" value="{{ treino.exercicio }}" required>
+        
+        <label>Séries</label>
+        <input type="number" name="series" value="{{ treino.series }}" required>
+        
+        <label>Repetições</label>
+        <input type="number" name="repeticoes" value="{{ treino.repeticoes }}" required>
+        
+        <label>Data</label>
+        <input type="date" name="data" value="{{ treino.data }}" required>
+        
+        <button type="submit" class="btn-save">Salvar Alterações</button>
+    </form>
+    <a href="/" class="btn-back">← Voltar sem salvar</a>
+</div>
+
+</body>
+</html>
