@@ -1,33 +1,39 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diário de Calistenia</title>
     <style>
         :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-main: #e0e0e0;
-            --text-muted: #888;
-            --accent: #6200ea;
-            --accent-hover: #7f39fb;
-            --success: #03dac6;
-            --danger: #cf6679;
-            --info: #2196f3;
+            --bg-color: #121212; --card-bg: #1e1e1e; --text-main: #e0e0e0; --text-muted: #888;
+            --accent: #6200ea; --accent-hover: #7f39fb; --success: #03dac6; --danger: #cf6679; --info: #2196f3;
+            --gold: #ffd700;
         }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 40px 20px; }
         .container { max-width: 700px; margin: auto; }
         h1, h2 { text-align: center; color: var(--text-main); font-weight: 300; }
         
-        /* Formulário */
-        .form-card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); margin-bottom: 40px; }
+        /* Painel de Status / RPG */
+        .status-panel { background: linear-gradient(145deg, #1e1e1e, #2a2a2a); padding: 20px; border-radius: 12px; border: 1px solid #333; margin-bottom: 30px; text-align: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .status-panel h2 { margin: 0 0 10px 0; color: var(--gold); font-size: 24px; text-transform: uppercase; letter-spacing: 2px;}
+        .xp-bar-container { background: #121212; border-radius: 10px; height: 20px; width: 100%; overflow: hidden; border: 1px solid #444; position: relative; }
+        .xp-bar-fill { background: var(--success); height: 100%; transition: width 0.5s ease-in-out; }
+        .xp-text { position: absolute; top: 0; left: 0; width: 100%; text-align: center; font-size: 12px; line-height: 20px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px #000; }
+        
+        /* Formulários e Inputs */
+        .form-card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); margin-bottom: 30px; }
         form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         form input { background: #2c2c2c; border: 1px solid #444; color: white; padding: 12px; border-radius: 6px; font-size: 15px; }
         form input:focus { outline: none; border-color: var(--accent); }
         .full-width { grid-column: span 2; }
         .btn-add { background-color: var(--accent); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; grid-column: span 2; }
         .btn-add:hover { background-color: var(--accent-hover); }
+
+        /* Barra de Pesquisa */
+        .search-bar { display: flex; gap: 10px; margin-bottom: 20px; }
+        .search-bar input { flex-grow: 1; padding: 12px; border-radius: 6px; background: #2c2c2c; border: 1px solid #444; color: white; }
+        .search-bar button { background-color: var(--info); color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; }
 
         /* Lista de Treinos */
         .treino-card { background: var(--card-bg); padding: 20px; margin-bottom: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--text-muted); transition: 0.3s; }
@@ -40,7 +46,7 @@
         .actions { display: flex; gap: 10px; }
         .btn { padding: 8px 12px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; color: #121212; transition: 0.2s; }
         .btn-toggle { background-color: var(--success); }
-        .btn-edit { background-color: var(--info); color: white; text-decoration: none; font-size: 13.5px; padding: 10px 12px;}
+        .btn-edit { background-color: var(--info); color: white; text-decoration: none; font-size: 13.5px; padding: 10px 12px; display: flex; align-items: center;}
         .btn-delete { background-color: var(--danger); color: white; }
         .btn:hover { filter: brightness(1.2); }
         form.inline-form { display: inline; margin: 0; grid-template-columns: 1fr; }
@@ -49,6 +55,16 @@
 <body>
 
 <div class="container">
+    
+    <div class="status-panel">
+        <h2>Nível {{ nivel }}</h2>
+        <p style="margin: 0 0 10px 0; font-size: 14px; color: var(--text-muted);">XP Total: {{ xp_total }}</p>
+        <div class="xp-bar-container">
+            <div class="xp-bar-fill" style="width: {{ xp_atual }}%;"></div>
+            <div class="xp-text">{{ xp_atual }} / 100 XP</div>
+        </div>
+    </div>
+
     <h1>Diário de Calistenia ⚡</h1>
     
     <div class="form-card">
@@ -60,6 +76,14 @@
             <button type="submit" class="btn-add">Registrar Treino</button>
         </form>
     </div>
+
+    <form action="/" method="GET" class="search-bar" style="display: flex;">
+        <input type="text" name="busca" value="{{ busca }}" placeholder="Pesquisar um exercício no histórico...">
+        <button type="submit">Pesquisar</button>
+        {% if busca %}
+            <a href="/" style="background-color: var(--danger); color: white; padding: 12px; border-radius: 6px; text-decoration: none; font-weight: bold;">Limpar</a>
+        {% endif %}
+    </form>
 
     <h2>Seus Treinos</h2>
     
@@ -74,20 +98,22 @@
                 <div class="actions">
                     <form action="/toggle/{{ treino.id }}" method="POST" class="inline-form">
                         <button type="submit" class="btn btn-toggle">
-                            {% if treino.concluido %}Desfazer{% else %}Feito{% endif %}
+                            {% if treino.concluido %}Desfazer{% else %}Feito (+25 XP){% endif %}
                         </button>
                     </form>
-                    
                     <a href="/editar/{{ treino.id }}" class="btn btn-edit">Editar</a>
-                    
                     <form action="/deletar/{{ treino.id }}" method="POST" class="inline-form">
-                        <button type="submit" class="btn btn-delete">Excluir</button>
+                        <button type="submit" class="btn btn-delete">Eliminar</button>
                     </form>
                 </div>
             </div>
         {% endfor %}
     {% else %}
-        <p style="text-align: center; color: #888; margin-top: 30px;">Nenhum treino registrado. O descanso acabou!</p>
+        {% if busca %}
+            <p style="text-align: center; color: #888; margin-top: 30px;">Nenhum exercício encontrado com esse nome.</p>
+        {% else %}
+            <p style="text-align: center; color: #888; margin-top: 30px;">Nenhum treino registado. O descanso acabou!</p>
+        {% endif %}
     {% endif %}
 </div>
 
