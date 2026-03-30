@@ -24,7 +24,7 @@ Um aplicativo web desenvolvido em **Python** utilizando o framework **Flask**. E
 1. Certifique-se de ter o Python 3 instalado no seu sistema (compatível com Windows, macOS e distribuições Linux/WSL).
 2. Clone este repositório para a sua máquina:
    ```bash
-   git clone [https://github.com/neo-Angelo/DST-calistenia.git](https://github.com/neo-Angelo/DST-calistenia.git)
+   git clone https://github.com/neo-Angelo/DST-calistenia.git
 
     ```
 3. Instale as pendencias necessarias
